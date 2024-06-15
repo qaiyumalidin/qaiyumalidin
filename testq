@@ -1,2 +1,54 @@
 pip install numpy matplotlib mesa
 
+from mesa import Agent, Model
+from mesa.time import RandomActivation
+from mesa.space import MultiGrid
+import numpy as np
+
+class CropAgent(Agent):
+    def __init__(self, unique_id, model, growth_rate, carbon_sequestration_rate):
+        super().__init__(unique_id, model)
+        self.growth_rate = growth_rate
+        self.carbon_sequestration_rate = carbon_sequestration_rate
+        self.biomass = 0
+        self.carbon_stored = 0
+
+    def step(self):
+        self.biomass += self.growth_rate
+        self.carbon_stored += self.carbon_sequestration_rate
+
+class TreeAgent(Agent):
+    def __init__(self, unique_id, model, growth_rate, carbon_sequestration_rate):
+        super().__init__(unique_id, model)
+        self.growth_rate = growth_rate
+        self.carbon_sequestration_rate = carbon_sequestration_rate
+        self.biomass = 0
+        self.carbon_stored = 0
+
+    def step(self):
+        self.biomass += self.growth_rate
+        self.carbon_stored += self.carbon_sequestration_rate
+
+import matplotlib.pyplot as plt
+
+model = CarbonFarmingModel(width=20, height=20, initial_crops=50, initial_trees=30)
+steps = 100
+
+total_biomass = []
+total_carbon = []
+
+for i in range(steps):
+    model.step()
+    biomass = sum([agent.biomass for agent in model.schedule.agents])
+    carbon = sum([agent.carbon_stored for agent in model.schedule.agents])
+    total_biomass.append(biomass)
+    total_carbon.append(carbon)
+
+plt.figure(figsize=(12, 6))
+plt.plot(total_biomass, label='Total Biomass')
+plt.plot(total_carbon, label='Total Carbon Sequestered')
+plt.legend()
+plt.xlabel('Step')
+plt.ylabel('Total Biomass / Carbon')
+plt.title('Simulation of Carbon Sequestration in Diverse Crop and Agroforestry Systems')
+plt.show()
